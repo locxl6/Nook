@@ -2,7 +2,7 @@ import sqlite3
 import uuid
 from datetime import datetime,timezone
 from pathlib import Path
-DB_PATH=Path(__file__).parent.parent.parent/"date"/"chatbot.sqlite3"
+DB_PATH=Path(__file__).parent.parent.parent/"data"/"chatbot.sqlite3"
 
 def get_db() -> sqlite3.Connection:
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -26,18 +26,18 @@ def init_db():
       id TEXT PRIMARY KEY,
       title TEXT NOT NULL,
       created_at TEXT NOT NULL,
-      updated_at TEXT NOT NULL,
-      );
+      updated_at TEXT NOT NULL
+     );
      CREATE TABLE IF NOT EXISTS messages (
       id TEXT PRIMARY KEY,
       conversation_id TEXT NOT NULL,
       role TEXT NOT NULL,
       content TEXT NOT NULL,
       created_at TEXT NOT NULL,
-      );
-    FOREIGN KEY (conversation_id) 
-            REFERENCES conversations (id) ON DELETE CASCADE;
-            """)
+      FOREIGN KEY (conversation_id)
+            REFERENCES conversations (id) ON DELETE CASCADE
+     );
+     """)
       conn.commit()
     finally:
       conn.close()
@@ -76,12 +76,12 @@ def add_message(conversation_id:str,role:str,content:str) ->dict|None:
     try:
         mid,now_ts=new_id(),now()
         conn.execute(
-            """insert into message
+            """insert into messages
             (id,conversation_id,role,content,created_at)
             values(?,?,?,?,?)""",
             (mid,conversation_id,role,content,now_ts))
         conn.execute(
-            "update conversations set updated_at=? where conversation_id=?",
+            "update conversations set updated_at=? where id=?",
             (now_ts,conversation_id)
         )
         conn.commit()
