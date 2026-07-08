@@ -64,7 +64,7 @@ def get_conversations(conversation_id:str)-> dict|None:
     conn=get_db()
     try:
         row=conn.execute(
-            "select id,title,created_at,updated_at from conversations where title=?",
+            "select id,title,created_at,updated_at from conversations where id=?",
             (conversation_id,)
         ).fetchone()
         return dict(row)if row else None
@@ -94,7 +94,7 @@ def delete_conversation(conversation_id:str) -> bool:
     conn=get_db()
     try:
         cursor=conn.execute(
-            "delect from conversations where id=?",conversation_id)
+            "delete from conversations where id=?",conversation_id)
         conn.commit()
         return cursor.rowcount>0
     finally:
@@ -106,8 +106,8 @@ def get_messages(conversation_id:str)->list[dict]:
     try:
         rows=conn.execute("""select id,conversation_id,role,content,created_at
          from messages
-         where id=?
-         order by created_at acs""",(conversation_id,)
+         where conversation_id=?
+         order by created_at asc""",(conversation_id,)
                           ).fetchall()
         conn.commit()
         return [dict(row) for row in rows]
@@ -119,7 +119,7 @@ def get_conversation()->list[dict]:
     conn=get_db()
     try:
         rows=conn.execute("""select id ,title,created_at,updated_at
-        from conversations id 
+        from conversations 
         order by updated_at desc""").fetchall()
         conn.commit()
         return [dict(row)for row in rows]
