@@ -126,6 +126,19 @@ def get_conversation()->list[dict]:
     finally:
         conn.close()
 
+
+def clear_messages(conversation_id:str)->bool:
+    conn=get_db()
+    try:
+        cursor=conn.execute("""
+        delect 
+        from messages 
+        where conversation_id=?""",conversation_id)
+        conn.commit()
+        return cursor.rowcount>0
+    finally:
+        conn.close()
+
 if __name__ == "__main__":
     init_db()
     c = create_conversations("测试会话")
