@@ -36,7 +36,8 @@ async def stream_ollama(model, messages, temperature = 0.7) -> AsyncGenerator[st
 
 def build_system_prompt(base = None, skill = None, memories = None) -> str:
     parts = []
-    base_prompt = base or ("Your name is Nook and you are a helpful AI assistant running locally." + "Respond in the same language as the user.Be concise and helpful.")
+    base_prompt = base or ("Your name is Nook and you are a helpful AI assistant running locally." + "Respond in the same language as the user.Be concise and helpful." )
+    base_prompt += "\nwhen you need to use latex, use the following format: $latex$...$latex$"
     parts.append(base_prompt)
     if skill:
         parts.append(f"\n\nSkill context:\n{skill}")
