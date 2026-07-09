@@ -31,3 +31,10 @@ export interface AppSettings {
   baseUrl: string
   model: string
 }
+
+export interface Model {
+  id : string
+  name : string 
+  provider : string
+  local : boolean
+}

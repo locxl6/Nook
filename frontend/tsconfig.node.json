@@ -9,7 +9,8 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true
+    "composite": true,
+    "declaration": true
   },
   "include": ["electron/**/*.ts", "electron.vite.config.ts"]
 }

@@ -1,5 +1,4 @@
 import { create } from 'zustand'
-import { v4 as uuid } from 'uuid'
 import { Message } from '@/types'
 
 interface ChatState {
@@ -7,6 +6,7 @@ interface ChatState {
   messages: Message[]
   input: string
   isLoading: boolean
+  selectedMessageId: string | null
 
   setCurrentConversationId: (id: string | null) => void
   setMessages: (messages: Message[]) => void
@@ -23,6 +23,7 @@ export const useChatStore = create<ChatState>((set) => ({
   messages: [],
   input: '',
   isLoading: false,
+  selectedMessageId: null,
 
   setCurrentConversationId: (id) => set({ currentConversationId: id }),
   setMessages: (messages) => set({ messages }),

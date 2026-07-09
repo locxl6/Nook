@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { AppSettings } from '@/types'
+import type { AppSettings } from '@/types'
 
 interface SettingsState {
   settings: AppSettings
@@ -8,7 +8,7 @@ interface SettingsState {
 
 const defaults: AppSettings = {
   apiKey: '',
-  baseUrl: 'http://localhost:5000',
+  baseUrl: 'http://localhost:8000',
   model: 'qwen2.5:1.5b'
 }
 
