@@ -1,0 +1,223 @@
+/* ========================================
+   Nook – DeepSeek-inspired Dark Theme
+   ======================================== */
+
+:root {
+  --ds-bg: #0d0d0d;
+  --ds-surface: #1a1a1a;
+  --ds-sidebar-bg: #0a0a0a;
+  --ds-sidebar-hover: #1a1a1a;
+  --ds-sidebar-active: #222222;
+  --ds-border: #262626;
+  --ds-accent: #3b82f6;
+  --ds-accent-hover: #2563eb;
+  --ds-text-primary: #e5e5e5;
+  --ds-text-secondary: #a3a3a3;
+  --ds-text-tertiary: #737373;
+  --ds-danger: #ef4444;
+}
+
+/* Ant Design overrides for dark theme */
+.ant-layout {
+  background: var(--ds-bg) !important;
+}
+
+.ant-menu-dark {
+  background: transparent !important;
+}
+
+.ant-input,
+.ant-input-affix-wrapper {
+  background: var(--ds-surface) !important;
+  border-color: var(--ds-border) !important;
+  color: var(--ds-text-primary) !important;
+}
+
+.ant-input::placeholder,
+.ant-input-affix-wrapper .ant-input::placeholder {
+  color: var(--ds-text-tertiary) !important;
+}
+
+.ant-input:focus,
+.ant-input-affix-wrapper:focus,
+.ant-input-affix-wrapper-focused {
+  border-color: var(--ds-accent) !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15) !important;
+}
+
+.ant-btn-primary {
+  background: var(--ds-accent) !important;
+  border-color: var(--ds-accent) !important;
+  box-shadow: none !important;
+}
+
+.ant-btn-primary:hover {
+  background: var(--ds-accent-hover) !important;
+  border-color: var(--ds-accent-hover) !important;
+}
+
+.ant-btn-primary:disabled {
+  background: #333 !important;
+  border-color: #333 !important;
+  color: #666 !important;
+}
+
+.ant-popconfirm .ant-popconfirm-message-title {
+  color: var(--ds-text-primary) !important;
+}
+
+.ant-popover-inner {
+  background: var(--ds-surface) !important;
+}
+
+.ant-select-dropdown {
+  background: var(--ds-surface) !important;
+  border: 1px solid var(--ds-border) !important;
+}
+
+.ant-select-item {
+  color: var(--ds-text-secondary) !important;
+}
+
+.ant-select-item-option-selected {
+  background: var(--ds-sidebar-active) !important;
+}
+
+.ant-select-item-option-active {
+  background: var(--ds-sidebar-hover) !important;
+}
+
+.ant-tooltip-inner {
+  background: #333 !important;
+  color: var(--ds-text-secondary) !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+}
+
+.ant-message-notice-content {
+  background: var(--ds-surface) !important;
+  color: var(--ds-text-primary) !important;
+  border-radius: 10px !important;
+}
+
+/* Markdown styling */
+.ds-markdown {
+  color: var(--ds-text-primary);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.ds-markdown p {
+  margin: 0 0 0.6em 0;
+}
+
+.ds-markdown p:last-child {
+  margin-bottom: 0;
+}
+
+.ds-markdown code {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--ds-accent);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+.ds-markdown pre {
+  background: #0d0d0d;
+  border: 1px solid var(--ds-border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  margin: 0.8em 0;
+}
+
+.ds-markdown pre code {
+  background: none;
+  color: var(--ds-text-primary);
+  padding: 0;
+  font-size: 0.85em;
+}
+
+.ds-markdown ul,
+.ds-markdown ol {
+  padding-left: 1.2em;
+  margin: 0.4em 0;
+}
+
+.ds-markdown li {
+  margin: 0.2em 0;
+}
+
+.ds-markdown blockquote {
+  border-left: 3px solid var(--ds-accent);
+  padding-left: 12px;
+  margin: 0.6em 0;
+  color: var(--ds-text-secondary);
+}
+
+.ds-markdown table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0.8em 0;
+}
+
+.ds-markdown th,
+.ds-markdown td {
+  border: 1px solid var(--ds-border);
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.ds-markdown th {
+  background: var(--ds-surface);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
+
+/* Sidebar delete button hover */
+.sidebar-delete-btn:hover {
+  opacity: 1 !important;
+  color: var(--ds-danger) !important;
+}
+
+/* Reset */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: var(--ds-bg);
+}
+
+/* Pulse animation for streaming indicator */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}

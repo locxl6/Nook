@@ -1,34 +1,12 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <meta charset="UTF-8" />
-    <title>--Nook--</title>
-    <link rel="stylesheet" href="xxx.css" />
-</head>
-
-<body>
-    <div class="container">
-        <div class="history">
-        <!--左侧侧边栏，历史记录-->
-            <div>历史记录</div>
-        </div>
-
-        <div class="header">
-        <!--标题-->
-            <div>标题栏</div>
-        </div>
-
-        <!-- 2. 动态列表容器：React 只接管这里！！！ -->
-        <div id="react-chat-list-container"></div>
-    
-        <div class="input">
-        <!--问题输入框-->
-            <input id="staticInput" placeholder="输入消息..." />
-            <button id="sendBtn">发送</button>
-        </div>
-    </div>
-
-    <!-- 引入 React 编译后的 JS 文件 -->
-    <script type="module" src="/src/main.jsx"></script>
-</body>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nook - AI Chat</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
