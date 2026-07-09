@@ -44,14 +44,17 @@ export default function AppSidebar({ collapsed, onCollapse }: Props) {
       breakpoint="lg"
       style={{
         background: 'var(--ds-sidebar-bg)',
-        borderRight: '1px solid var(--ds-border)'
+        borderRight: '1px solid var(--ds-border)',
+        overflow: 'hidden'
       }}
     >
       <div
         style={{
           display: 'flex',
           flexDirection: 'column',
-          height: '100%'
+          height: '100%',
+          width: 260,
+          minWidth: 260
         }}
       >
         <div
