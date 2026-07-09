@@ -60,7 +60,8 @@ export default function ChatInputArea() {
             color: 'var(--ds-text-primary)',
             fontSize: 14,
             padding: '10px 14px',
-            resize: 'none'
+            resize: 'none',
+            transition: 'background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease'
           }}
         />
         <Button
