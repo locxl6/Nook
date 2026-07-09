@@ -1,25 +1,46 @@
-import { Layout, Typography, ConfigProvider, theme } from 'antd'
-import { CommentOutlined } from '@ant-design/icons'
+import { Layout, Typography, ConfigProvider, theme, Button } from 'antd'
+import { CommentOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons'
 import Sidebar from '@/components/Sidebar'
 import ChatInput from '@/components/ChatInput'
 import ChatMessageItem from '@/components/ChatMessage'
 import { useChatStore } from '@/stores/chatStore'
 import { useConversationStore } from '@/stores/conversationStore'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 
 const { Header, Content } = Layout
 const { Text } = Typography
+
+const MOBILE_WIDTH = 768
 
 export default function App() {
   const { messages, isLoading } = useChatStore()
   const { conversations, currentId } = useConversationStore()
   const chatEndRef = useRef<HTMLDivElement>(null)
 
+  const [collapsed, setCollapsed] = useState(() => window.innerWidth < MOBILE_WIDTH)
+  const [manualToggle, setManualToggle] = useState(false)
+
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+  const handleResize = useCallback(() => {
+    if (!manualToggle) {
+      setCollapsed(window.innerWidth < MOBILE_WIDTH)
+    }
+  }, [manualToggle])
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [handleResize])
+
   const currentConv = conversations.find((c) => c.id === currentId)
+
+  const toggleSidebar = () => {
+    setManualToggle(true)
+    setCollapsed((v) => !v)
+  }
 
   return (
     <ConfigProvider
@@ -36,7 +57,7 @@ export default function App() {
       }}
     >
       <Layout style={{ height: '100vh' }}>
-        <Sidebar />
+        <Sidebar collapsed={collapsed} onCollapse={setCollapsed} />
 
         <Layout style={{ background: 'var(--ds-bg)' }}>
           <Header
@@ -46,16 +67,17 @@ export default function App() {
               padding: '0 24px',
               display: 'flex',
               alignItems: 'center',
+              gap: 12,
               height: 56
             }}
           >
-            <Text
-              style={{
-                color: 'var(--ds-text-primary)',
-                fontSize: 14,
-                fontWeight: 500
-              }}
-            >
+            <Button
+              type="text"
+              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+              onClick={toggleSidebar}
+              style={{ color: 'var(--ds-text-secondary)', fontSize: 16, borderRadius: 8 }}
+            />
+            <Text style={{ color: 'var(--ds-text-primary)', fontSize: 14, fontWeight: 500 }}>
               {currentConv ? currentConv.title : '新对话'}
             </Text>
           </Header>

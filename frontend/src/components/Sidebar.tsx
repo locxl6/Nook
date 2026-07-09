@@ -12,7 +12,12 @@ import { useEffect } from 'react'
 const { Sider } = Layout
 const { Text } = Typography
 
-export default function AppSidebar() {
+interface Props {
+  collapsed: boolean
+  onCollapse: (v: boolean) => void
+}
+
+export default function AppSidebar({ collapsed, onCollapse }: Props) {
   const { conversations, currentId, loading, fetchConversations, deleteConversation } =
     useConversationStore()
   const { selectConversation, newChat } = useStreamChat()
@@ -31,6 +36,12 @@ export default function AppSidebar() {
   return (
     <Sider
       width={260}
+      collapsedWidth={0}
+      collapsed={collapsed}
+      collapsible
+      trigger={null}
+      onCollapse={onCollapse}
+      breakpoint="lg"
       style={{
         background: 'var(--ds-sidebar-bg)',
         borderRight: '1px solid var(--ds-border)'
