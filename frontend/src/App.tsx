@@ -9,6 +9,7 @@ import {
 import Sidebar from '@/components/Sidebar'
 import ChatInput from '@/components/ChatInput'
 import ChatMessageItem from '@/components/ChatMessage'
+import ModelSelector from '@/components/ModelSelector'
 import { useChatStore } from '@/stores/chatStore'
 import { useConversationStore } from '@/stores/conversationStore'
 import { useEffect, useRef, useState, useCallback } from 'react'
@@ -114,6 +115,7 @@ export default function App() {
             >
               {currentConv ? currentConv.title : '新对话'}
             </Text>
+            <ModelSelector />
             <Tooltip title={isDark ? '切换到白天模式' : '切换到夜间模式'}>
               <Button
                 type="text"
