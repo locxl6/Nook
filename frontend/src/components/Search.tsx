@@ -5,8 +5,8 @@ import {
   ArrowLeftOutlined,
   MessageOutlined
 } from '@ant-design/icons'
-import { useConversationStore } from '@/stores/conversationStore'
 import { useStreamChat } from '@/hooks/useStreamChat'
+import { useSettingsStore } from '@/stores/settingsStore'
 import { Conversation } from '@/types'
 
 const { Text } = Typography
@@ -19,7 +19,6 @@ interface Props {
 type SearchScope = 'title' | 'content'
 
 export default function SearchPanel({ open, onClose }: Props) {
-  const { searchConversations } = useConversationStore()
   const { selectConversation } = useStreamChat()
 
   const [keyword, setKeyword] = useState('')
@@ -52,8 +51,10 @@ export default function SearchPanel({ open, onClose }: Props) {
           scope === 'title'
             ? `tiitle_keyword=${encodeURIComponent(keyword.trim())}`
             : `keyword=${encodeURIComponent(keyword.trim())}`
-        const baseUrl = 'http://localhost:5000' // fallback
-        const res = await fetch(`${baseUrl}/api/conversations?${qs}`)
+        const baseUrl = useSettingsStore.getState().settings.baseUrl
+        const res = await fetch(`${baseUrl}/api/conversations?${qs}`, {
+          headers: { Accept: 'application/json' }
+        })
         const data = await res.json()
         setResults(Array.isArray(data) ? data : [])
         setSearched(true)
