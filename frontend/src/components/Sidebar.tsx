@@ -17,9 +17,10 @@ const { Text } = Typography
 interface Props {
   collapsed: boolean
   onCollapse: (v: boolean) => void
+  onSearchOpen: () => void
 }
 
-export default function AppSidebar({ collapsed, onCollapse }: Props) {
+export default function AppSidebar({ collapsed, onCollapse, onSearchOpen }: Props) {
   const { conversations, currentId, loading, fetchConversations, deleteConversation } =
     useConversationStore()
   const { selectConversation, newChat } = useStreamChat()
@@ -76,6 +77,7 @@ export default function AppSidebar({ collapsed, onCollapse }: Props) {
             <Button
               type="text"
               icon={<SearchOutlined />}
+              onClick={onSearchOpen}
               style={{
                 color: 'var(--ds-text-secondary)',
                 borderRadius: 10,

@@ -11,6 +11,7 @@ import Sidebar from '@/components/Sidebar'
 import ChatInput from '@/components/ChatInput'
 import ChatMessageItem from '@/components/ChatMessage'
 import ModelSelector from '@/components/ModelSelector'
+import SearchPanel from '@/components/Search'
 import { useChatStore } from '@/stores/chatStore'
 import { useConversationStore } from '@/stores/conversationStore'
 import { useStreamChat } from '@/hooks/useStreamChat'
@@ -45,6 +46,7 @@ export default function App() {
   const [isDark, setIsDark] = useState(getInitialTheme)
   const [collapsed, setCollapsed] = useState(() => window.innerWidth < MOBILE_WIDTH)
   const [manualToggle, setManualToggle] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light')
@@ -88,7 +90,7 @@ export default function App() {
       }}
     >
       <Layout style={{ height: '100vh' }}>
-        <Sidebar collapsed={collapsed} onCollapse={setCollapsed} />
+        <Sidebar collapsed={collapsed} onCollapse={setCollapsed} onSearchOpen={() => setSearchOpen(true)} />
 
         <Layout style={{ background: 'var(--ds-bg)', position: 'relative' }}>
           {/* Floating buttons when sidebar collapsed */}
@@ -121,6 +123,7 @@ export default function App() {
                 <Button
                   type="text"
                   icon={<SearchOutlined />}
+                  onClick={() => setSearchOpen(true)}
                   style={{
                     color: 'var(--ds-text-secondary)',
                     borderRadius: 10,
@@ -245,6 +248,8 @@ export default function App() {
           <ChatInput />
         </Layout>
       </Layout>
+
+      <SearchPanel open={searchOpen} onClose={() => setSearchOpen(false)} />
     </ConfigProvider>
   )
 }
