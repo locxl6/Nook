@@ -6,14 +6,20 @@ export interface Message {
   timestamp: number
 }
 
+export interface ApiMessage {
+  id: string
+  conversation_id: string
+  role: string
+  content: string
+  created_at: string
+}
+
 export interface Conversation {
   id: string
   title: string
   created_at: string
   updated_at: string
 }
-
-export interface ConversationListResponse extends Conversation {}
 
 export interface ChatStreamChunk {
   type: string
@@ -26,15 +32,12 @@ export interface GeneralResponse {
   message: string
 }
 
+export interface RenameTitleRequest {
+  new_title: string
+}
+
 export interface AppSettings {
   apiKey: string
   baseUrl: string
   model: string
-}
-
-export interface Model {
-  id : string
-  name : string 
-  provider : string
-  local : boolean
 }

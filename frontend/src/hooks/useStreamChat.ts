@@ -5,6 +5,16 @@ import { useConversationStore } from '@/stores/conversationStore'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { Message, ChatStreamChunk } from '@/types'
 
+function mapMessage(api: { id: string; conversation_id: string; role: string; content: string; created_at: string }): Message {
+  return {
+    id: api.id,
+    conversationId: api.conversation_id,
+    role: api.role as Message['role'],
+    content: api.content,
+    timestamp: new Date(api.created_at).getTime()
+  }
+}
+
 export function useStreamChat() {
   const {
     currentConversationId, messages, input, isLoading,
@@ -14,7 +24,7 @@ export function useStreamChat() {
 
   const {
     currentId, setCurrentId, createConversation, fetchConversations,
-    cacheMessages, getCachedMessages, clearMessageCache
+    fetchMessages
   } = useConversationStore()
 
   const { settings } = useSettingsStore()
@@ -80,11 +90,6 @@ export function useStreamChat() {
       updateLastAssistantMessage(msg)
     } finally {
       setIsLoading(false)
-      const currentMessages = useChatStore.getState().messages
-      const convIdForCache = useChatStore.getState().currentConversationId || currentId
-      if (convIdForCache) {
-        cacheMessages(convIdForCache, currentMessages)
-      }
       await fetchConversations()
     }
   }
@@ -152,50 +157,42 @@ export function useStreamChat() {
       timestamp: Date.now()
     }
 
-    const newMsgs = [...filtered, newAsst]
-    setMessages(newMsgs)
+    setMessages([...filtered, newAsst])
 
     await doStream(convId, lastUser.content)
-  }, [
-    currentConversationId, currentId, messages,
-    setIsLoading, setMessages
-  ])
+  }, [currentConversationId, currentId, messages, setIsLoading, setMessages])
 
   const handleDeleteMessage = useCallback(
-    (messageId: string) => {
+    async (messageId: string) => {
       const convId = currentConversationId || currentId
       if (!convId) return
 
       const msg = messages.find((m) => m.id === messageId)
       if (!msg) return
 
-      let newMsgs: Message[]
-
       if (msg.role === 'user') {
         const idx = messages.findIndex((m) => m.id === messageId)
         const next = messages[idx + 1]
         const toRemove = new Set([messageId])
         if (next?.role === 'assistant') toRemove.add(next.id)
-        newMsgs = messages.filter((m) => !toRemove.has(m.id))
+        setMessages(messages.filter((m) => !toRemove.has(m.id)))
       } else {
-        newMsgs = messages.filter((m) => m.id !== messageId)
+        setMessages(messages.filter((m) => m.id !== messageId))
       }
-
-      setMessages(newMsgs)
-      cacheMessages(convId, newMsgs)
     },
-    [currentConversationId, currentId, messages, setMessages, cacheMessages]
+    [currentConversationId, currentId, messages, setMessages]
   )
 
   const selectConversation = useCallback(
-    (id: string) => {
+    async (id: string) => {
       abortRef.current?.abort()
       setCurrentConversationId(id)
       setCurrentId(id)
-      const cached = getCachedMessages(id)
-      setMessages(cached)
+      setMessages([])
+      const apiMsgs = await fetchMessages(id)
+      setMessages(apiMsgs.map(mapMessage))
     },
-    [setCurrentConversationId, setCurrentId, setMessages, getCachedMessages]
+    [setCurrentConversationId, setCurrentId, setMessages, fetchMessages]
   )
 
   const newChat = useCallback(() => {
