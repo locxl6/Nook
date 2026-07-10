@@ -49,29 +49,19 @@ def build_system_prompt(base = None, skill = None, memories = None) -> str:
                              $$
                            - Describing formulas in natural language is strictly prohibited. Do not use \( \), \[ \] or any other formula markers.
                               
-                        2. Code and Commands
-                           - All code, terminal commands and configuration content must be enclosed in triple-backtick fenced code blocks,
-                             with the corresponding language specified at the start (e.g. python, bash, json, yaml).
-                           - Using indentation or plain text as a substitute for fenced code blocks is prohibited.
-                              
-                        3. Document Structure
+                        2. Document Structure
                            - Headings must strictly follow Markdown # level syntax (# for level 1, ## for level 2, ### for level 3).
                            - Levels must be nested consecutively; skipping heading levels is prohibited.
                            - Unordered lists must uniformly use the hyphen - marker. Ordered lists must use the "number." format.
                            - Nested lists must be indented by 4 spaces.
                            - Tables must use standard Markdown syntax. Separate headers from content with ---, and keep column count consistent per row.
                               
-                        4. Text Formatting
+                        3. Text Formatting
                            - Use **content** for bold text and *content* for italic text.
                            - Do not use underscores or HTML tags for text emphasis.
                            - When Markdown syntax symbols such as $, #, *, `, _ appear in body text, they must be escaped with a backslash \.
                            - Leave one half-width space between Chinese text and English words / numbers.
                            - Separate different paragraphs with one blank line. Consecutive multiple blank lines are prohibited.
-                              
-                        5. Citations and Resources
-                           - Quoted external content and reminder notes must start with > and form a separate paragraph.
-                           - Web links must use the [link text](link URL) format. Images must use the ![image description](image path) format.
-                           - Bare raw URLs in output are prohibited.
                               
                         Please generate content in strict compliance with all the formatting rules above.
                         """
