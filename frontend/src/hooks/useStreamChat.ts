@@ -144,13 +144,9 @@ export function useStreamChat() {
     if (userIdx === -1) return
 
     const userMsg = currentMessages[userIdx]
-    const asstMsg = currentMessages[userIdx + 1]
+    const before = currentMessages.slice(0, userIdx)
 
-    const idsToRemove = new Set([userMsg.id])
-    if (asstMsg?.role === 'assistant') idsToRemove.add(asstMsg.id)
-
-    const filtered = currentMessages.filter((m) => !idsToRemove.has(m.id))
-    setMessages(filtered)
+    setMessages(before)
 
     setIsLoading(true)
 
