@@ -3,7 +3,9 @@ import {
   PlusOutlined,
   DeleteOutlined,
   MessageOutlined,
-  CommentOutlined
+  CommentOutlined,
+  SearchOutlined,
+  MenuFoldOutlined
 } from '@ant-design/icons'
 import { useConversationStore } from '@/stores/conversationStore'
 import { useStreamChat } from '@/hooks/useStreamChat'
@@ -41,7 +43,6 @@ export default function AppSidebar({ collapsed, onCollapse }: Props) {
       collapsible
       trigger={null}
       onCollapse={onCollapse}
-      breakpoint="lg"
       style={{
         background: 'var(--ds-sidebar-bg)',
         borderRight: '1px solid var(--ds-border)',
@@ -57,6 +58,7 @@ export default function AppSidebar({ collapsed, onCollapse }: Props) {
           minWidth: 260
         }}
       >
+        {/* Branding */}
         <div
           style={{
             padding: '16px',
@@ -69,16 +71,51 @@ export default function AppSidebar({ collapsed, onCollapse }: Props) {
           <Text strong style={{ color: 'var(--ds-text-primary)', fontSize: 16, letterSpacing: 1 }}>
             Nook
           </Text>
-          <Tooltip title="新建对话" placement="right">
+          <Button
+            type="text"
+            size="small"
+            icon={<MenuFoldOutlined />}
+            onClick={() => onCollapse(true)}
+            style={{ color: 'var(--ds-text-secondary)', borderRadius: 8 }}
+          />
+        </div>
+
+        {/* Actions: New Chat + Search */}
+        <div
+          style={{
+            display: 'flex',
+            gap: 8,
+            padding: '12px 12px 8px',
+            borderBottom: '1px solid var(--ds-border)'
+          }}
+        >
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={newChat}
+            block
+            style={{
+              background: 'var(--ds-accent)',
+              borderColor: 'var(--ds-accent)',
+              borderRadius: 10
+            }}
+          >
+            新建对话
+          </Button>
+          <Tooltip title="搜索" placement="right">
             <Button
               type="text"
-              icon={<PlusOutlined style={{ color: 'var(--ds-text-secondary)' }} />}
-              onClick={newChat}
-              style={{ color: 'var(--ds-text-secondary)', borderRadius: 8 }}
+              icon={<SearchOutlined />}
+              style={{
+                color: 'var(--ds-text-secondary)',
+                borderRadius: 10,
+                flexShrink: 0
+              }}
             />
           </Tooltip>
         </div>
 
+        {/* Conversation list */}
         <div style={{ flex: 1, overflow: 'hidden auto', padding: '8px' }}>
           {loading ? (
             <div style={{ padding: '24px', textAlign: 'center', color: 'var(--ds-text-tertiary)' }}>
@@ -186,17 +223,21 @@ export default function AppSidebar({ collapsed, onCollapse }: Props) {
           )}
         </div>
 
-        <div
+        {/* Footer trigger */}
+        <Button
+          type="text"
+          icon={<MenuFoldOutlined />}
+          onClick={() => onCollapse(true)}
           style={{
-            padding: '12px 16px',
+            color: 'var(--ds-text-tertiary)',
+            borderRadius: 0,
             borderTop: '1px solid var(--ds-border)',
-            textAlign: 'center'
+            height: 40,
+            fontSize: 12
           }}
         >
-          <Text style={{ color: 'var(--ds-text-tertiary)', fontSize: 11 }}>
-            Nook v0.0.1
-          </Text>
-        </div>
+          收起侧边栏
+        </Button>
       </div>
     </Sider>
   )

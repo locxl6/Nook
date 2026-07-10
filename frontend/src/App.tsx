@@ -1,10 +1,11 @@
 import { Layout, Typography, ConfigProvider, theme, Button, Tooltip } from 'antd'
 import {
   CommentOutlined,
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
   SunOutlined,
-  MoonOutlined
+  MoonOutlined,
+  MenuUnfoldOutlined,
+  PlusOutlined,
+  SearchOutlined
 } from '@ant-design/icons'
 import Sidebar from '@/components/Sidebar'
 import ChatInput from '@/components/ChatInput'
@@ -12,6 +13,7 @@ import ChatMessageItem from '@/components/ChatMessage'
 import ModelSelector from '@/components/ModelSelector'
 import { useChatStore } from '@/stores/chatStore'
 import { useConversationStore } from '@/stores/conversationStore'
+import { useStreamChat } from '@/hooks/useStreamChat'
 import { useEffect, useRef, useState, useCallback } from 'react'
 
 const { Header, Content } = Layout
@@ -37,6 +39,7 @@ function saveTheme(isDark: boolean) {
 export default function App() {
   const { messages, isLoading } = useChatStore()
   const { conversations, currentId } = useConversationStore()
+  const { newChat } = useStreamChat()
   const chatEndRef = useRef<HTMLDivElement>(null)
 
   const [isDark, setIsDark] = useState(getInitialTheme)
@@ -65,9 +68,9 @@ export default function App() {
 
   const currentConv = conversations.find((c) => c.id === currentId)
 
-  const toggleSidebar = () => {
+  const expandSidebar = () => {
     setManualToggle(true)
-    setCollapsed((v) => !v)
+    setCollapsed(false)
   }
 
   const toggleTheme = () => setIsDark((v) => !v)
@@ -87,7 +90,62 @@ export default function App() {
       <Layout style={{ height: '100vh' }}>
         <Sidebar collapsed={collapsed} onCollapse={setCollapsed} />
 
-        <Layout style={{ background: 'var(--ds-bg)' }}>
+        <Layout style={{ background: 'var(--ds-bg)', position: 'relative' }}>
+          {/* Floating buttons when sidebar collapsed */}
+          {collapsed && (
+            <div
+              style={{
+                position: 'absolute',
+                top: 12,
+                left: 12,
+                zIndex: 100,
+                display: 'flex',
+                gap: 6
+              }}
+            >
+              <Tooltip title="展开侧边栏" placement="right">
+                <Button
+                  type="text"
+                  icon={<MenuUnfoldOutlined />}
+                  onClick={expandSidebar}
+                  style={{
+                    color: 'var(--ds-text-secondary)',
+                    borderRadius: 10,
+                    background: 'var(--ds-surface)',
+                    border: '1px solid var(--ds-border)',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+                  }}
+                />
+              </Tooltip>
+              <Tooltip title="搜索" placement="right">
+                <Button
+                  type="text"
+                  icon={<SearchOutlined />}
+                  style={{
+                    color: 'var(--ds-text-secondary)',
+                    borderRadius: 10,
+                    background: 'var(--ds-surface)',
+                    border: '1px solid var(--ds-border)',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+                  }}
+                />
+              </Tooltip>
+              <Tooltip title="新建对话" placement="right">
+                <Button
+                  type="text"
+                  icon={<PlusOutlined />}
+                  onClick={newChat}
+                  style={{
+                    color: '#fff',
+                    borderRadius: 10,
+                    background: 'var(--ds-accent)',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+                  }}
+                />
+              </Tooltip>
+            </div>
+          )}
+
           <Header
             style={{
               background: 'var(--ds-bg)',
@@ -99,12 +157,6 @@ export default function App() {
               height: 56
             }}
           >
-            <Button
-              type="text"
-              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-              onClick={toggleSidebar}
-              style={{ color: 'var(--ds-text-secondary)', fontSize: 16, borderRadius: 8 }}
-            />
             <Text
               style={{
                 color: 'var(--ds-text-primary)',
