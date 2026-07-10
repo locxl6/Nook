@@ -156,3 +156,36 @@ def delete_message(conversation_id: str, message_id: str) -> bool:
         return cursor.rowcount > 0
     finally:
         conn.close()
+        
+def search_conversations(keyword: str) -> list[ConversationInfo]:
+    conn = get_db()
+    try:
+        rows = conn.execute(
+            """select id, title, created_at, updated_at
+            from conversations
+            where title like ?
+            order by updated_at desc""",
+            (f"%{keyword}%",),
+        ).fetchall()
+        return [ConversationInfo(**dict(row)) for row in rows]
+    finally:
+        conn.close()
+        
+def search_conversations_by_all(keyword: str) -> list[ConversationInfo]:
+    conn = get_db()
+    try:
+        pattern = f"%{keyword}%"
+        rows = conn.execute(
+            """
+            SELECT DISTINCT c.id, c.title, c.created_at, c.updated_at
+            FROM conversations c
+            LEFT JOIN messages m ON c.id = m.conversation_id
+            WHERE c.title LIKE ?
+               OR m.content LIKE ?
+            ORDER BY c.updated_at DESC
+            """,
+            (pattern, pattern)
+        ).fetchall()
+        return [ConversationInfo(**row) for row in rows]
+    finally:
+        conn.close()

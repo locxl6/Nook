@@ -55,3 +55,19 @@ async def delete_message(conversation_id: str, message_id: str, response: Respon
         response.status_code = 404
         return GeneralResponse(ok=False, message="消息未找到")
     return GeneralResponse(ok=True, message="消息已删除")
+
+@router.get("/api/conversations", summary="根据标题查询会话", description="根据关键词搜索会话")
+async def search_conversations_by_title(title_keyword: str, response: Response) -> list[ConversationInfo] | GeneralResponse:
+    conversations = db.search_conversations(title_keyword)
+    if not conversations:
+        response.status_code = 404
+        return GeneralResponse(ok=False, message="未找到相关会话")
+    return conversations
+
+@router.get("/api/conversations", summary="根据内容查询会话", description="根据关键词搜索会话")
+async def search_conversations_by_content(keyword: str, response: Response) -> list[ConversationInfo] | GeneralResponse:
+    conversations = db.search_conversations_by_all(keyword)
+    if not conversations:
+        response.status_code = 404
+        return GeneralResponse(ok=False, message="未找到相关会话")
+    return conversations
