@@ -38,10 +38,11 @@ function saveTheme(isDark: boolean) {
 }
 
 export default function App() {
-  const { messages, isLoading } = useChatStore()
+  const { messages, isLoading, currentConversationId } = useChatStore()
   const { conversations, currentId } = useConversationStore()
   const { newChat } = useStreamChat()
   const chatEndRef = useRef<HTMLDivElement>(null)
+  const prevConvId = useRef<string | null | undefined>(currentConversationId)
 
   const [isDark, setIsDark] = useState(getInitialTheme)
   const [collapsed, setCollapsed] = useState(() => window.innerWidth < MOBILE_WIDTH)
@@ -54,7 +55,9 @@ export default function App() {
   }, [isDark])
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    const switched = prevConvId.current !== currentConversationId
+    prevConvId.current = currentConversationId
+    chatEndRef.current?.scrollIntoView({ behavior: switched ? 'auto' : 'smooth' })
   }, [messages])
 
   const handleResize = useCallback(() => {
@@ -209,7 +212,8 @@ export default function App() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     marginBottom: 16,
-                    border: '1px solid var(--ds-border)'
+                    border: '1px solid var(--ds-border)',
+                    transition: 'background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease'
                   }}
                 >
                   <CommentOutlined style={{ fontSize: 26, color: 'var(--ds-accent)' }} />

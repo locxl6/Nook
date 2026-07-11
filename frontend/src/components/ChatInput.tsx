@@ -32,7 +32,8 @@ export default function ChatInputArea() {
       style={{
         padding: '16px 24px',
         borderTop: '1px solid var(--ds-border)',
-        background: 'var(--ds-bg)'
+        background: 'var(--ds-bg)',
+        transition: 'background-color 0.3s ease, border-color 0.3s ease' // ✅ 新增过渡
       }}
     >
       <div
@@ -61,7 +62,7 @@ export default function ChatInputArea() {
             fontSize: 14,
             padding: '10px 14px',
             resize: 'none',
-            transition: 'background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease'
+            transition: 'background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease'
           }}
         />
         <Button

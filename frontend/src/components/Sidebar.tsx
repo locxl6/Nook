@@ -66,7 +66,8 @@ export default function AppSidebar({ collapsed, onCollapse, onSearchOpen }: Prop
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            borderBottom: '1px solid var(--ds-border)'
+            borderBottom: '1px solid var(--ds-border)',
+            transition: 'background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease'
           }}
         >
           <Text strong style={{ color: 'var(--ds-text-primary)', fontSize: 16, letterSpacing: 1 }}>
