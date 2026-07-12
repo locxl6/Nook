@@ -14,6 +14,7 @@ interface ChatState {
   updateLastAssistantMessage: (content: string) => void
   setInput: (input: string) => void
   setIsLoading: (loading: boolean) => void
+  setSelectedMessageId: (id: string | null) => void
   clearChat: () => void
   removeMessage: (id: string) => void
 }
@@ -37,6 +38,7 @@ export const useChatStore = create<ChatState>((set) => ({
     }),
   setInput: (input) => set({ input }),
   setIsLoading: (loading) => set({ isLoading: loading }),
+  setSelectedMessageId: (id) => set({ selectedMessageId: id }),
   clearChat: () =>
     set({ currentConversationId: null, messages: [], input: '', isLoading: false }),
   removeMessage: (id) =>

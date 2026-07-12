@@ -2,8 +2,17 @@
   "name": "nook",
   "version": "0.0.1",
   "description": "Local AI Chat Application",
-  "keywords": ["UI", "frontend", "electron", "ai", "chat"],
-  "repository": { "type": "git", "url": "tbf" },
+  "keywords": [
+    "UI",
+    "frontend",
+    "electron",
+    "ai",
+    "chat"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "tbf"
+  },
   "license": "MIT",
   "author": "anrans",
   "main": "./dist-electron/main.js",
@@ -17,6 +26,7 @@
     "@ant-design/icons": "^6.1.0",
     "antd": "^6.1.0",
     "electron-store": "^11.0.2",
+    "prism-react-renderer": "^2.4.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-markdown": "^10.1.0",

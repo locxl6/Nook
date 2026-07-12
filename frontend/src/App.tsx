@@ -38,11 +38,12 @@ function saveTheme(isDark: boolean) {
 }
 
 export default function App() {
-  const { messages, isLoading, currentConversationId } = useChatStore()
+  const { messages, isLoading, currentConversationId, selectedMessageId, setSelectedMessageId } = useChatStore()
   const { conversations, currentId } = useConversationStore()
   const { newChat } = useStreamChat()
   const chatEndRef = useRef<HTMLDivElement>(null)
   const prevConvId = useRef<string | null | undefined>(currentConversationId)
+  const scrollTargetRef = useRef(false)
 
   const [isDark, setIsDark] = useState(getInitialTheme)
   const [collapsed, setCollapsed] = useState(() => window.innerWidth < MOBILE_WIDTH)
@@ -55,10 +56,23 @@ export default function App() {
   }, [isDark])
 
   useEffect(() => {
+    if (selectedMessageId) {
+      const el = document.getElementById(`msg-${selectedMessageId}`)
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        scrollTargetRef.current = true
+        setSelectedMessageId(null)
+      }
+      return
+    }
+    if (scrollTargetRef.current) {
+      scrollTargetRef.current = false
+      return
+    }
     const switched = prevConvId.current !== currentConversationId
     prevConvId.current = currentConversationId
     chatEndRef.current?.scrollIntoView({ behavior: switched ? 'auto' : 'smooth' })
-  }, [messages])
+  }, [messages, selectedMessageId])
 
   const handleResize = useCallback(() => {
     if (!manualToggle) {

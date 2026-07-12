@@ -9,8 +9,104 @@ import {
 } from '@ant-design/icons'
 import type { Message } from '@/types'
 import { useStreamChat } from '@/hooks/useStreamChat'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
+import { Highlight, themes } from 'prism-react-renderer'
+
+function CodeBlock({ language, code }: { language: string; code: string }) {
+  const [copied, setCopied] = useState(false)
+  const [isLight, setIsLight] = useState(
+    () => document.documentElement.getAttribute('data-theme') === 'light'
+  )
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setIsLight(document.documentElement.getAttribute('data-theme') === 'light')
+    })
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+    return () => observer.disconnect()
+  }, [])
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(code)
+    } catch {
+      const ta = document.createElement('textarea')
+      ta.value = code
+      document.body.appendChild(ta)
+      ta.select()
+      document.execCommand('copy')
+      document.body.removeChild(ta)
+    }
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <div
+      style={{
+        borderRadius: 10,
+        overflow: 'hidden',
+        border: '1px solid var(--ds-border)',
+        margin: '12px 0'
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '6px 12px',
+          background: 'var(--ds-sidebar-bg)',
+          borderBottom: '1px solid var(--ds-border)'
+        }}
+      >
+        <span
+          style={{
+            fontSize: 12,
+            color: 'var(--ds-text-tertiary)',
+            fontWeight: 500
+          }}
+        >
+          {language || 'text'}
+        </span>
+        <Tooltip title={copied ? '已复制' : '复制代码'}>
+          <Button
+            type="text"
+            size="small"
+            icon={copied ? <CheckOutlined /> : <CopyOutlined />}
+            onClick={handleCopy}
+            style={{ color: 'var(--ds-text-tertiary)', fontSize: 12 }}
+          />
+        </Tooltip>
+      </div>
+      <Highlight code={code} language={language || 'text'} theme={isLight ? themes.nightOwlLight : themes.nightOwl}>
+        {({ tokens, getLineProps, getTokenProps }) => (
+          <pre
+            style={{
+              margin: 0,
+              padding: '12px 16px',
+              overflow: 'auto',
+              background: 'var(--ds-bg)',
+              fontSize: 13,
+              lineHeight: 1.6,
+              textAlign: 'left',
+              fontFamily: 'Consolas, monospace'
+            }}
+          >
+            {tokens.map((line, i) => (
+              <div key={i} {...getLineProps({ line })}>
+                {line.map((token, key) => (
+                  <span key={key} {...getTokenProps({ token })} />
+                ))}
+              </div>
+            ))}
+          </pre>
+        )}
+      </Highlight>
+    </div>
+  )
+}
 
 interface Props {
   message: Message
@@ -59,6 +155,7 @@ export default function ChatMessageItem({ message, isStreaming }: Props) {
 
   return (
     <div
+      id={`msg-${message.id}`}
       style={{
         display: 'flex',
         flexDirection: isUser ? 'row-reverse' : 'row',
@@ -131,7 +228,21 @@ export default function ChatMessageItem({ message, isStreaming }: Props) {
               <span>{message.content}</span>
             ) : (
               <div className="ds-markdown">
-                <ReactMarkdown>{message.content}</ReactMarkdown>
+                <ReactMarkdown
+                  components={{
+                    pre: ({ children }) => <>{children}</>,
+                    code: ({ className, children, ...props }: any) => {
+                      const match = /language-(\w+)/.exec(className || '')
+                      if (match) {
+                        const code = String(children).replace(/\n$/, '')
+                        return <CodeBlock language={match[1]} code={code} />
+                      }
+                      return <code className={className} {...props}>{children}</code>
+                    }
+                  }}
+                >
+                  {message.content}
+                </ReactMarkdown>
               </div>
             )
           ) : (

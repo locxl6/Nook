@@ -6,6 +6,7 @@ import {
   MessageOutlined
 } from '@ant-design/icons'
 import { useConversationStore } from '@/stores/conversationStore'
+import { useChatStore } from '@/stores/chatStore'
 import { useStreamChat } from '@/hooks/useStreamChat'
 import { Conversation } from '@/types'
 
@@ -18,13 +19,36 @@ interface Props {
 
 type SearchScope = 'title' | 'content'
 
+interface SearchItem {
+  conversation: Conversation
+  snippet?: string
+  matchMessageId?: string
+}
+
+function getSnippet(content: string, keyword: string, maxLen = 100): string {
+  const lower = content.toLowerCase()
+  const kw = keyword.toLowerCase()
+  const idx = lower.indexOf(kw)
+  if (idx === -1) return content.slice(0, maxLen) + (content.length > maxLen ? '...' : '')
+
+  const half = Math.floor((maxLen - kw.length) / 2)
+  const start = Math.max(0, idx - half)
+  const end = Math.min(content.length, idx + kw.length + half)
+
+  let snippet = content.slice(start, end)
+  if (start > 0) snippet = '...' + snippet
+  if (end < content.length) snippet += '...'
+  return snippet
+}
+
 export default function SearchPanel({ open, onClose }: Props) {
   const { conversations, fetchConversations, fetchMessages } = useConversationStore()
   const { selectConversation } = useStreamChat()
+  const { setSelectedMessageId } = useChatStore()
 
   const [keyword, setKeyword] = useState('')
   const [scope, setScope] = useState<SearchScope>('title')
-  const [results, setResults] = useState<Conversation[]>([])
+  const [results, setResults] = useState<SearchItem[]>([])
   const [loading, setLoading] = useState(false)
   const [searched, setSearched] = useState(false)
 
@@ -56,19 +80,25 @@ export default function SearchPanel({ open, onClose }: Props) {
     debounceRef.current = setTimeout(async () => {
       try {
         if (scope === 'title') {
-          const filtered = conversations.filter((c) =>
-            c.title.toLowerCase().includes(kw)
-          )
+          const filtered = conversations
+            .filter((c) => c.title.toLowerCase().includes(kw))
+            .map((c) => ({ conversation: c }))
           setResults(filtered)
         } else {
-          const matched: Conversation[] = []
+          const matched: SearchItem[] = []
           for (const conv of conversations) {
             try {
               const msgs = await fetchMessages(conv.id)
-              const hasMatch = msgs.some((m) =>
-                m.content.toLowerCase().includes(kw)
-              )
-              if (hasMatch) matched.push(conv)
+              for (const m of msgs) {
+                if (m.content.toLowerCase().includes(kw)) {
+                  matched.push({
+                    conversation: conv,
+                    snippet: getSnippet(m.content, kw),
+                    matchMessageId: m.id
+                  })
+                  break
+                }
+              }
             } catch {
               // skip failed fetches
             }
@@ -86,8 +116,11 @@ export default function SearchPanel({ open, onClose }: Props) {
     }
   }, [keyword, scope, conversations])
 
-  const handleSelect = (conv: Conversation) => {
-    selectConversation(conv.id)
+  const handleSelect = (item: SearchItem) => {
+    if (item.matchMessageId) {
+      setSelectedMessageId(item.matchMessageId)
+    }
+    selectConversation(item.conversation.id)
     onClose()
   }
 
@@ -182,13 +215,13 @@ export default function SearchPanel({ open, onClose }: Props) {
             />
           ) : results.length > 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              {results.map((conv) => (
+              {results.map((item) => (
                 <div
-                  key={conv.id}
-                  onClick={() => handleSelect(conv)}
+                  key={item.conversation.id}
+                  onClick={() => handleSelect(item)}
                   style={{
                     display: 'flex',
-                    alignItems: 'center',
+                    alignItems: 'flex-start',
                     gap: 10,
                     padding: '10px 12px',
                     borderRadius: 10,
@@ -204,17 +237,32 @@ export default function SearchPanel({ open, onClose }: Props) {
                     (e.currentTarget as HTMLDivElement).style.background = 'transparent'
                   }}
                 >
-                  <MessageOutlined style={{ color: 'var(--ds-text-tertiary)', fontSize: 13 }} />
+                  <MessageOutlined style={{ color: 'var(--ds-text-tertiary)', fontSize: 13, marginTop: 2 }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <Text style={{ color: 'var(--ds-text-primary)', fontSize: 13 }} ellipsis>
-                      {conv.title}
+                      {item.conversation.title}
                     </Text>
-                    {conv.updated_at && (
+                    {item.snippet ? (
                       <div
-                        style={{ fontSize: 11, color: 'var(--ds-text-tertiary)', marginTop: 2 }}
+                        style={{
+                          fontSize: 12,
+                          color: 'var(--ds-text-tertiary)',
+                          marginTop: 4,
+                          lineHeight: 1.5,
+                          whiteSpace: 'pre-wrap',
+                          wordBreak: 'break-all'
+                        }}
                       >
-                        {new Date(conv.updated_at).toLocaleDateString()}
+                        {item.snippet}
                       </div>
+                    ) : (
+                      item.conversation.updated_at && (
+                        <div
+                          style={{ fontSize: 11, color: 'var(--ds-text-tertiary)', marginTop: 2 }}
+                        >
+                          {new Date(item.conversation.updated_at).toLocaleDateString()}
+                        </div>
+                      )
                     )}
                   </div>
                 </div>
