@@ -52,17 +52,33 @@ export default function SearchPanel({ open, onClose }: Props) {
   const [loading, setLoading] = useState(false)
   const [searched, setSearched] = useState(false)
 
+  const [visible, setVisible] = useState(false)
+  const [animating, setAnimating] = useState(false)
+  const timerRef = useRef<ReturnType<typeof setTimeout>>()
+
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     if (open) {
+      clearTimeout(timerRef.current)
+      setVisible(true)
       fetchConversations()
     } else {
-      setKeyword('')
-      setResults([])
-      setSearched(false)
+      setAnimating(false)
+      timerRef.current = setTimeout(() => {
+        setVisible(false)
+        setKeyword('')
+        setResults([])
+        setSearched(false)
+      }, 250)
     }
   }, [open])
+
+  useEffect(() => {
+    if (visible) {
+      requestAnimationFrame(() => setAnimating(true))
+    }
+  }, [visible])
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current)
@@ -124,7 +140,7 @@ export default function SearchPanel({ open, onClose }: Props) {
     onClose()
   }
 
-  if (!open) return null
+  if (!visible) return null
 
   return (
     <div
@@ -137,7 +153,9 @@ export default function SearchPanel({ open, onClose }: Props) {
         justifyContent: 'center',
         background: 'rgba(0, 0, 0, 0.45)',
         backdropFilter: 'blur(6px)',
-        WebkitBackdropFilter: 'blur(6px)'
+        WebkitBackdropFilter: 'blur(6px)',
+        opacity: animating ? 1 : 0,
+        transition: 'opacity 0.2s ease'
       }}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose()
@@ -153,7 +171,10 @@ export default function SearchPanel({ open, onClose }: Props) {
           boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
           display: 'flex',
           flexDirection: 'column',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          opacity: animating ? 1 : 0,
+          transform: animating ? 'scale(1) translateY(0)' : 'scale(0.96) translateY(-8px)',
+          transition: 'opacity 0.25s ease, transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)'
         }}
       >
         <div
