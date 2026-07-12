@@ -189,20 +189,23 @@ export function useStreamChat() {
       const convId = currentConversationId || currentId
       if (!convId) return
 
-      const msg = messages.find((m) => m.id === messageId)
+      const currentMessages = useChatStore.getState().messages
+      const msg = currentMessages.find((m) => m.id === messageId)
       if (!msg) return
 
+      const toRemove: string[] = [messageId]
       if (msg.role === 'user') {
-        const idx = messages.findIndex((m) => m.id === messageId)
-        const next = messages[idx + 1]
-        const toRemove = new Set([messageId])
-        if (next?.role === 'assistant') toRemove.add(next.id)
-        setMessages(messages.filter((m) => !toRemove.has(m.id)))
-      } else {
-        setMessages(messages.filter((m) => m.id !== messageId))
+        const idx = currentMessages.findIndex((m) => m.id === messageId)
+        const next = currentMessages[idx + 1]
+        if (next?.role === 'assistant') toRemove.push(next.id)
+      }
+
+      setMessages(currentMessages.filter((m) => !toRemove.includes(m.id)))
+      for (const id of toRemove) {
+        fetch(`${settings.baseUrl}/api/conversations/${convId}/messages/${id}`, { method: 'DELETE' })
       }
     },
-    [currentConversationId, currentId, messages, setMessages]
+    [currentConversationId, currentId, setMessages, settings.baseUrl]
   )
 
   const selectConversation = useCallback(
