@@ -24,10 +24,18 @@ def _get_data_dir() -> Path:
 
 class Settings:
     def __init__(self):
-        self.ollama_default_model: str = "qwen2.5:1.5b"
-        self.ollama_host: str = "http://localhost:11434"
-        self.listen_host: str = "0.0.0.0"
-        self.listen_port: int = 11451
+        self.ollama_default_model: str = os.environ.get(
+            "NOOK_MODEL", "qwen2.5:1.5b"
+        )
+        self.ollama_host: str = os.environ.get(
+            "NOOK_OLLAMA_HOST", "http://localhost:11434"
+        )
+        self.listen_host: str = os.environ.get(
+            "NOOK_HOST", "0.0.0.0"
+        )
+        self.listen_port: int = int(os.environ.get(
+            "NOOK_PORT", "11451"
+        ))
         self.sensitive_words_file: str = str(
             _get_app_dir() / "app" / "data" / "sensitive.txt"
         )
