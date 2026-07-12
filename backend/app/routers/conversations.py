@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Response
-from app.schemas import NewConversationRequest, ConversationInfo,GeneralResponse
+from app.schemas import ModifyTitleRequest, NewConversationRequest, ConversationInfo,GeneralResponse
 import app.db as db
 router = APIRouter()
 
@@ -73,8 +73,8 @@ async def search_conversations_by_content(keyword: str, response: Response) -> l
     return conversations
 
 @router.put("/api/conversations/{conversation_id}/title", summary="修改会话标题", description="根据会话ID修改会话标题")
-async def update_conversation_title(conversation_id: str, new_title: str, response: Response) -> GeneralResponse:
-    success = db.update_conversation_title(conversation_id, new_title)
+async def update_conversation_title(conversation_id: str, request: ModifyTitleRequest, response: Response) -> GeneralResponse:
+    success = db.update_conversation_title(conversation_id, request.new_title)
     if not success:
         response.status_code = 404
         return GeneralResponse(ok=False, message="会话未找到")

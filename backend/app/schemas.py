@@ -52,3 +52,7 @@ class ConversationInfo(BaseModel):
 class NewConversationRequest(BaseModel):
     '''新建会话请求'''
     title: str = Field(default=None, description="会话标题")
+    
+class ModifyTitleRequest(BaseModel):
+    '''修改会话标题请求'''
+    new_title: str = Field(default=None, description="新的会话标题")
