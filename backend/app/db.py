@@ -2,8 +2,9 @@ import sqlite3
 import uuid
 from datetime import datetime,timezone
 from pathlib import Path
+from app.config import setting
 from app.schemas import ConversationInfo
-DB_PATH=Path(__file__).parent.parent.parent/"data"/"chatbot.sqlite3"
+DB_PATH = Path(setting.data_dir) / "chatbot.sqlite3"
 
 def get_db() -> sqlite3.Connection:
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)

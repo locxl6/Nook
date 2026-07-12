@@ -20,7 +20,24 @@
     "dev": "electron-vite dev",
     "build": "electron-vite build",
     "preview": "electron-vite preview",
-    "start": "electron ."
+    "start": "electron .",
+    "package": "electron-builder --dir --win"
+  },
+  "build": {
+    "appId": "com.locxl.nook",
+    "productName": "Nook",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "dir",
+      "icon": "../build/nook.ico"
+    }
   },
   "dependencies": {
     "@ant-design/icons": "^6.1.0",
@@ -39,6 +56,7 @@
     "@types/uuid": "^10.0.0",
     "@vitejs/plugin-react": "^4.6.0",
     "electron": "^43.0.0",
+    "electron-builder": "^26.0.0",
     "electron-vite": "^3.1.0",
     "typescript": "^5.8.3",
     "vite": "^6.3.5"

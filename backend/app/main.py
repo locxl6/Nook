@@ -14,7 +14,7 @@ app = FastAPI()
 init_db()
 
 p = Path(setting.sensitive_words_file)
-words = [l.strip() for l in p.read_text().splitlines() if l.strip() and l[0] != "#"] if p.exists() else []
+words = [l.strip() for l in p.read_text(encoding="utf-8").splitlines() if l.strip() and l[0] != "#"] if p.exists() else []
 
 
 @app.middleware("http")
@@ -41,3 +41,9 @@ app.include_router(health.router)
 app.add_middleware(
     CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"]
 )
+
+# PyInstaller / direct entry point — not used when started via uvicorn CLI.
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host=setting.listen_host, port=setting.listen_port)
+

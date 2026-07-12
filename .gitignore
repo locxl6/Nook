@@ -33,3 +33,11 @@ Thumbs.db
 
 # test
 *.sh
+
+# release
+build/
+dist/
+installer/
+*.ps1
+*.iss
+*.spec

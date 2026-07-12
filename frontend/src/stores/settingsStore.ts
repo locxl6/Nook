@@ -8,7 +8,7 @@ interface SettingsState {
 
 const defaults: AppSettings = {
   apiKey: '',
-  baseUrl: 'http://localhost:8000',
+  baseUrl: 'http://localhost:11451',
   model: 'qwen2.5:1.5b'
 }
 
