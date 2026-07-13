@@ -34,6 +34,7 @@ Thumbs.db
 
 # test
 *.sh
+!packaging/linux/install.sh
 
 # release
 build/*

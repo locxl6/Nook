@@ -80,7 +80,13 @@ jobs:
       - name: Package (tar.gz)
         if: matrix.pkg == 'tar'
         working-directory: frontend/release
-        run: tar czf "$GITHUB_WORKSPACE/nook-linux-x64.tar.gz" Nook-linux-x64
+        run: |
+          cp "$GITHUB_WORKSPACE/packaging/linux/install.sh" Nook-linux-x64/
+          cp "$GITHUB_WORKSPACE/packaging/linux/README.md" Nook-linux-x64/
+          cp "$GITHUB_WORKSPACE/build/nook.png" Nook-linux-x64/
+          chmod +x Nook-linux-x64/install.sh Nook-linux-x64/Nook \
+            Nook-linux-x64/resources/backend/nook-backend
+          tar czf "$GITHUB_WORKSPACE/nook-linux-x64.tar.gz" Nook-linux-x64
 
       - name: Package (dmg)
         if: matrix.pkg == 'dmg'

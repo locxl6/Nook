@@ -63,12 +63,14 @@ function startBackend(): Promise<void> {
       spawn('ollama', ['serve'], {
         detached: true,
         stdio: 'ignore',
-        shell: true
+        shell: true,
+        windowsHide: true
       }).unref()
     }
 
     backend = spawn(exePath, args, {
       stdio: 'pipe',
+      windowsHide: true,
       env: { ...process.env }
     })
 
