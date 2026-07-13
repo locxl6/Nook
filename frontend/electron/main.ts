@@ -1,5 +1,5 @@
 import { spawn, type ChildProcess } from 'child_process'
-import { app, BrowserWindow, dialog, ipcMain } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain, Menu } from 'electron'
 import { join } from 'path'
 import http from 'http'
 
@@ -123,6 +123,8 @@ function killBackend(): void {
 }
 
 app.whenReady().then(async () => {
+  Menu.setApplicationMenu(null)
+
   ipcMain.handle('app:restart', () => {
     app.relaunch()
     app.exit()
