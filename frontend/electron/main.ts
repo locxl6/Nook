@@ -6,15 +6,17 @@ import http from 'http'
 let mainWindow: BrowserWindow | null = null
 let backend: ChildProcess | null = null
 const isDev = !app.isPackaged
+const isWin = process.platform === 'win32'
+const backendExeName = isWin ? 'nook-backend.exe' : 'nook-backend'
 
 function resolveBackendExe(): string {
   if (isDev) {
-    return join(
-      __dirname,
-      '..', '..', '..', 'backend', '.venv', 'Scripts', 'python.exe'
-    )
+    const pythonPath = isWin
+      ? join('..', '..', '..', 'backend', '.venv', 'Scripts', 'python.exe')
+      : join('..', '..', '..', 'backend', '.venv', 'bin', 'python')
+    return join(__dirname, pythonPath)
   }
-  return join(process.resourcesPath, 'backend', 'nook-backend.exe')
+  return join(process.resourcesPath, 'backend', backendExeName)
 }
 
 function resolveBackendArgs(): string[] {
@@ -56,8 +58,8 @@ function startBackend(): Promise<void> {
     const args = resolveBackendArgs()
     const healthUrl = 'http://localhost:11451/health'
 
-    // Start ollama serve in background (ignore if already running)
-    if (!isDev) {
+    // The Windows Ollama app does not always start its service at login.
+    if (!isDev && isWin) {
       spawn('ollama', ['serve'], {
         detached: true,
         stdio: 'ignore',

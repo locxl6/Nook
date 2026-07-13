@@ -65,16 +65,9 @@ export default function ModelSelectorHeader() {
 			if (data.ok) {
 				setDownloadedModels((prev) => new Set(prev).add(modelName));
 				message.success(`${modelName} 下载完成`);
+				fetchModels();
+				updateSettings({ model: `ollama:${modelName}` });
 				setDownloadOpen(false);
-				Modal.confirm({
-					title: "下载完成",
-					content: "模型下载完成，需要重启应用使更改生效。",
-					okText: "立即重启",
-					cancelText: "稍后重启",
-					onOk: () => {
-						window.electronAPI.invoke("app:restart");
-					},
-				});
 			} else {
 				message.error(`下载失败: ${data.message}`);
 			}
