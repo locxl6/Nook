@@ -41,3 +41,12 @@ export interface AppSettings {
   baseUrl: string
   model: string
 }
+
+declare global {
+  interface Window {
+    electronAPI: {
+      invoke: (channel: string, ...args: unknown[]) => Promise<unknown>
+      on: (channel: string, cb: (...args: unknown[]) => void) => void
+    }
+  }
+}
