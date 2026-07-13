@@ -19,14 +19,10 @@ cd Nook-linux-x64
 从应用菜单打开 Nook，或者运行：
 
 ```bash
-~/.local/share/nook/Nook
+~/.local/share/nook/launch.sh
 ```
 
-如果 Ollama 没有自动启动，可运行：
-
-```bash
-ollama serve
-```
+启动脚本会检查 Ollama 服务。服务已经运行时直接跳过；未运行时会在后台执行 `ollama serve`，日志位于 `~/.local/state/nook/ollama.log`。
 
 检查 Ollama 服务：
 

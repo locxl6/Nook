@@ -14,7 +14,8 @@ if [[ "$SOURCE_DIR" != "$INSTALL_DIR" ]]; then
   cp -a "$SOURCE_DIR/." "$INSTALL_DIR/"
 fi
 
-chmod +x "$INSTALL_DIR/Nook" "$INSTALL_DIR/resources/backend/nook-backend"
+chmod +x "$INSTALL_DIR/Nook" "$INSTALL_DIR/launch.sh" \
+  "$INSTALL_DIR/resources/backend/nook-backend"
 cp "$INSTALL_DIR/nook.png" "$ICON_DIR/nook.png"
 
 cat > "$APPLICATIONS_DIR/nook.desktop" <<EOF
@@ -22,7 +23,7 @@ cat > "$APPLICATIONS_DIR/nook.desktop" <<EOF
 Type=Application
 Name=Nook
 Comment=Local AI Chat Application
-Exec="$INSTALL_DIR/Nook"
+Exec="$INSTALL_DIR/launch.sh"
 Path=$INSTALL_DIR
 Icon=nook
 Terminal=false
@@ -51,4 +52,4 @@ else
 fi
 
 echo "Nook is installed. Launch it from the application menu or run:"
-echo "  $INSTALL_DIR/Nook"
+echo "  $INSTALL_DIR/launch.sh"
