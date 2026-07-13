@@ -98,14 +98,7 @@ jobs:
           $ErrorActionPreference = "Stop"
           Invoke-WebRequest "https://github.com/jrsoftware/issrc/releases/download/is-6_7_1/innosetup-6.7.1.exe" -OutFile "$env:TEMP\is.exe"
           Start-Process -Wait "$env:TEMP\is.exe" -ArgumentList "/VERYSILENT /CURRENTUSER /NORESTART"
-          Invoke-WebRequest "https://www.nuget.org/api/v2/package/Tools.InnoDownloadPlugin/1.5.1" -OutFile "$env:TEMP\idp.zip"
-          Add-Type -AssemblyName System.IO.Compression.FileSystem
-          [IO.Compression.ZipFile]::ExtractToDirectory("$env:TEMP\idp.zip", "$env:TEMP\idp")
           $iscc = "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe"
-          Copy-Item "$env:TEMP\idp\tools\unicode\idp.dll" (Split-Path $iscc)
-          Copy-Item "$env:TEMP\idp\tools\idp.iss" build\
-          New-Item -Force -ItemType Directory build\unicode\idplang | Out-Null
-          Copy-Item "$env:TEMP\idp\tools\unicode\idplang\*" build\unicode\idplang\
           & $iscc Nook.iss
 
       - name: Upload

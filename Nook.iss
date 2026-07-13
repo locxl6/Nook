@@ -1,7 +1,5 @@
 ; Nook Windows installer (Inno Setup 6)
 
-#include "build\idp.iss"
-
 #define MyAppName "Nook"
 #define MyAppVersion "1.0.0"
 #define MyAppPublisher "NookWorks"
@@ -66,12 +64,25 @@ begin
   Result := not IsOllamaInstalled;
 end;
 
-procedure InitializeWizard;
+function DownloadProgress(const Url, FileName: String;
+  const Progress, ProgressMax: Int64): Boolean;
 begin
-  if ShouldInstallOllama then begin
-    idpAddFile('https://ollama.com/download/OllamaSetup.exe',
-      ExpandConstant('{tmp}\OllamaSetup.exe'));
-    idpDownloadAfter(wpReady);
+  Result := True;
+end;
+
+function NextButtonClick(CurPageID: Integer): Boolean;
+begin
+  Result := True;
+  if (CurPageID = wpReady) and ShouldInstallOllama then begin
+    try
+      DownloadTemporaryFile(
+        'https://ollama.com/download/OllamaSetup.exe',
+        'OllamaSetup.exe', '', @DownloadProgress);
+    except
+      MsgBox('Unable to download Ollama. Check your connection and try again.',
+        mbError, MB_OK);
+      Result := False;
+    end;
   end;
 end;
 
